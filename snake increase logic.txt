@@ -1,0 +1,12 @@
+
+So, after we append the current snake position of snake to snake_list,
+it will see if the len(snake_list) increases the snake_size
+
+if it increases, it will delete the 0th index of snake_list(the old position)
+and after we eat a food, the snake_size increases by 10..
+So, lets consider we ate a food, it will first increase the snake_size by 10
+(remember, it is still appending the current position of snake to snake_list)
+And then it will see if the len(snake_list) increases snake_size
+This time though, it will delete everything except the last 10 elements of snake_list
+as snake_size is equal to 10 and then the display_player() func. will draw the snake along
+with the tail
