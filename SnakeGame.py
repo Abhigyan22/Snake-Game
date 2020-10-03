@@ -1,8 +1,8 @@
 """The very famous Snake game built using Python
 """
-import pygame
 from random import randint
 from math import sqrt, pow
+import pygame
 
 def lose_message(scr:int):
     """[PRINTS THE LOSE MESSAGE]
@@ -107,36 +107,85 @@ class Player():
         without the index of [:-6], it is gonna show i lose the first time i eat...
         Again, because they are so close to the head and the distance between them is less
         than 25"""
-def change_player_position(Player, set_velocity):
+def change_player_position(player, set_velocity):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             want_to_play = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                Player.velocityX = -set_velocity
-                Player.velocityY = 0
+                player.velocityX = -set_velocity
+                player.velocityY = 0
             elif event.key == pygame.K_RIGHT:
-                Player.velocityX = set_velocity
-                Player.velocityY = 0
+                player.velocityX = set_velocity
+                player.velocityY = 0
             elif event.key == pygame.K_UP:
-                Player.velocityY = -set_velocity
-                Player.velocityX = 0
+                player.velocityY = -set_velocity
+                player.velocityX = 0
             elif event.key == pygame.K_DOWN:
-                Player.velocityY = set_velocity
-                Player.velocityX = 0
+                player.velocityY = set_velocity
+                player.velocityX = 0
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
-                Player.velocityX = -set_velocity
-                Player.velocityY = 0
+                player.velocityX = -set_velocity
+                player.velocityY = 0
             elif event.key == pygame.K_RIGHT:
-                Player.velocityX = set_velocity
-                Player.velocityY = 0
+                player.velocityX = set_velocity
+                player.velocityY = 0
             elif event.key == pygame.K_UP:
-                Player.velocityY = -set_velocity
-                Player.velocityX = 0
+                player.velocityY = -set_velocity
+                player.velocityX = 0
             elif event.key == pygame.K_DOWN:
-                Player.velocityY = set_velocity
-                Player.velocityX = 0
+                player.velocityY = set_velocity
+                player.velocityX = 0
+
+def game():
+
+    want_to_play = True
+    lose = False
+    set_velocity = 7
+    score = 0
+    foodX = randint(5,735)
+    foodY = randint(5, 535)
+
+    while want_to_play:
+        change_player_position(player, set_velocity)
+        WINDOW.blit(BACKGROUND, (0, 0))
+        print_score(score)
+        # display_player(snake_list, player_size)
+        player.display_player()
+        display_food(foodX, foodY)
+        player.X += player.velocityX
+        player.Y += player.velocityY
+        head = []
+        head.append(player.X) #Appending the current X position of snake to head
+        head.append(player.Y) #Appending the current Y position of snake to head
+        player.snake_list.append(head) #Appedning the current position of snake to snake_lis
+
+        if len(player.snake_list)>player.snake_size:
+            del player.snake_list[0] #deletes the old position of snake if the length of
+                            #snake_list increases the snake_list
+        if food_eaten(player, foodX, foodY):
+            Food_sound = pygame.mixer.Sound("FoodEaten.wav")
+            Food_sound.play()
+            player.snake_size += 10
+            score+=1
+            foodX = randint(5, 735)
+            foodY = randint(5, 535)
+
+        if player.check_boundary() or player.check_hit():
+            lose = True
+            want_to_play = False
+
+        pygame.display.update()
+
+    while lose:
+        WINDOW.blit(BACKGROUND, (0, 0))
+        lose_message(score)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                lose = False
+        pygame.display.update()
+
 player = Player()
 
 #Below are the basic configurations of the game
@@ -153,50 +202,5 @@ BACKGROUND = pygame.image.load("SnakeBackground.png")
 pygame.mixer.music.load("BackgroundMusic.wav")
 pygame.mixer.music.play(-1)
 
-def game(Player):
-#The main loop of the game -
-    want_to_play = True
-    lose = False
-    set_velocity = 7
-    score = 0
-    foodX = randint(5,735)
-    foodY = randint(5, 535)
 
-    while want_to_play:
-        change_player_position(player, set_velocity)
-        WINDOW.blit(BACKGROUND, (0, 0))
-        print_score(score)
-        # display_player(snake_list, player_size)
-        Player.display_player()
-        display_food(foodX, foodY)
-        Player.X += Player.velocityX
-        Player.Y += Player.velocityY
-        head = []
-        head.append(Player.X) #Appending the current X position of snake to head
-        head.append(Player.Y) #Appending the current Y position of snake to head
-        Player.snake_list.append(head) #Appedning the current position of snake to snake_lis
-        if len(Player.snake_list)>Player.snake_size:
-            del Player.snake_list[0] #deletes the old position of snake if the length of
-                            #snake_list increases the snake_list
-        if food_eaten(Player, foodX, foodY):
-            Food_sound = pygame.mixer.Sound("FoodEaten.wav")
-            Food_sound.play()
-            Player.snake_size += 10
-            score+=1
-            foodX = randint(5, 735)
-            foodY = randint(5, 535)
-
-        if Player.check_boundary() or Player.check_hit():
-            lose = True
-            want_to_play = False
-
-        pygame.display.update()
-
-    while lose:
-        WINDOW.blit(BACKGROUND, (0, 0))
-        lose_message(score)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                lose = False
-        pygame.display.update()
-game(player)
+game()
