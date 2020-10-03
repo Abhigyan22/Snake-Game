@@ -138,8 +138,13 @@ def change_player_position(player, set_velocity):
                 player.velocityY = set_velocity
                 player.velocityX = 0
 
+<<<<<<< HEAD
 def game():
 
+=======
+def game(player):
+#The main loop of the game -
+>>>>>>> 9302fbaf2eb8f811f3ea1c3b5881a37d418e2d84
     want_to_play = True
     lose = False
     set_velocity = 7
@@ -203,4 +208,8 @@ pygame.mixer.music.load("BackgroundMusic.wav")
 pygame.mixer.music.play(-1)
 
 
+<<<<<<< HEAD
 game()
+=======
+game(player)
+>>>>>>> 9302fbaf2eb8f811f3ea1c3b5881a37d418e2d84
