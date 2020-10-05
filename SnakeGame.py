@@ -157,8 +157,6 @@ def new_game_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start.isOver(pos):
                     start.color = (0,0,255)
-                    # pygame.time.wait(50)
-                    # return True
             if event.type == pygame.MOUSEBUTTONUP:
                 if start.isOver(pos):
                     return True
