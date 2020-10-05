@@ -2,6 +2,8 @@
 """
 from random import randint
 from math import sqrt, pow
+from buttons import Button
+from sys import exit
 import pygame
 
 def lose_message(scr:int):
@@ -48,6 +50,8 @@ def food_eaten(player, foodX, foodY):
     return False
 
 class Player():
+    """A class for the Player (i.e. the snake)
+    """
     def __init__(self):
         self.X = 364
         self.Y = 264
@@ -107,50 +111,77 @@ class Player():
         without the index of [:-6], it is gonna show i lose the first time i eat...
         Again, because they are so close to the head and the distance between them is less
         than 25"""
-def change_player_position(player, set_velocity):
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            want_to_play = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                player.velocityX = -set_velocity
-                player.velocityY = 0
-            elif event.key == pygame.K_RIGHT:
-                player.velocityX = set_velocity
-                player.velocityY = 0
-            elif event.key == pygame.K_UP:
-                player.velocityY = -set_velocity
-                player.velocityX = 0
-            elif event.key == pygame.K_DOWN:
-                player.velocityY = set_velocity
-                player.velocityX = 0
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                player.velocityX = -set_velocity
-                player.velocityY = 0
-            elif event.key == pygame.K_RIGHT:
-                player.velocityX = set_velocity
-                player.velocityY = 0
-            elif event.key == pygame.K_UP:
-                player.velocityY = -set_velocity
-                player.velocityX = 0
-            elif event.key == pygame.K_DOWN:
-                player.velocityY = set_velocity
-                player.velocityX = 0
+def change_player_position(event, player, set_velocity):
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+            player.velocityX = -set_velocity
+            player.velocityY = 0
+        elif event.key == pygame.K_RIGHT:
+            player.velocityX = set_velocity
+            player.velocityY = 0
+        elif event.key == pygame.K_UP:
+            player.velocityY = -set_velocity
+            player.velocityX = 0
+        elif event.key == pygame.K_DOWN:
+            player.velocityY = set_velocity
+            player.velocityX = 0
+    elif event.type == pygame.KEYUP:
+        if event.key == pygame.K_LEFT:
+            player.velocityX = -set_velocity
+            player.velocityY = 0
+        elif event.key == pygame.K_RIGHT:
+            player.velocityX = set_velocity
+            player.velocityY = 0
+        elif event.key == pygame.K_UP:
+            player.velocityY = -set_velocity
+            player.velocityX = 0
+        elif event.key == pygame.K_DOWN:
+            player.velocityY = set_velocity
+            player.velocityX = 0
 
 
+def new_game_menu():
+    # color = (255,255,255)
+    start = Button((255,255,255), 300, 200, 100, 70, "Start")
+
+    while True:
+        WINDOW.blit(BACKGROUND, (0,0))
+        start.draw(WINDOW)
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEMOTION:
+                if start.isOver(pos):
+                    start.color = (0,255,255)
+                else:
+                    start.color = (255,255,255)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start.isOver(pos):
+                    start.color = (0,0,255)
+                    # pygame.time.wait(50)
+                    # return True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if start.isOver(pos):
+                    return True
+            if event.type == pygame.QUIT:
+                exit()
+        pygame.display.update()
 def game():
-
-
-    want_to_play = True
+    WINDOW.blit(BACKGROUND, (0,0))
+    player = Player()
     lose = False
     set_velocity = 7
     score = 0
     foodX = randint(5,735)
     foodY = randint(5, 535)
-
+    while True:
+        if new_game_menu():
+            want_to_play = True
+            break
     while want_to_play:
-        change_player_position(player, set_velocity)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                want_to_play = False
+            change_player_position(event, player, set_velocity)
         WINDOW.blit(BACKGROUND, (0, 0))
         print_score(score)
         # display_player(snake_list, player_size)
@@ -188,7 +219,7 @@ def game():
                 lose = False
         pygame.display.update()
 
-player = Player()
+
 
 #Below are the basic configurations of the game
 pygame.init()
@@ -205,6 +236,4 @@ pygame.mixer.music.load("BackgroundMusic.wav")
 pygame.mixer.music.play(-1)
 
 
-
 game()
-
