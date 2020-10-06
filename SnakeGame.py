@@ -139,35 +139,49 @@ def change_player_position(event, player, set_velocity):
             player.velocityY = set_velocity
             player.velocityX = 0
 
-
-def new_game_menu():
-    # color = (255,255,255)
-    start = Button((255,255,255), 300, 200, 100, 70, "Start")
-
+def button_maker(start, end):
     while True:
         WINDOW.blit(BACKGROUND, (0,0))
-        start.draw(WINDOW)
+        start.draw(WINDOW, (0,0,0))
+        end.draw(WINDOW, (0,0,0))
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEMOTION:
                 if start.isOver(pos):
                     start.color = (0,255,255)
+                elif end.isOver(pos):
+                    end.color = (0,255,255)
                 else:
-                    start.color = (255,255,255)
-            if event.type == pygame.MOUSEBUTTONDOWN:
+                    start.color = (220,220,220)
+                    end.color = (220,220,220)
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if start.isOver(pos):
                     start.color = (0,0,255)
+                elif end.isOver(pos):
+                    end.color = (0,0,255)
             if event.type == pygame.MOUSEBUTTONUP:
                 if start.isOver(pos):
                     return True
+                elif end.isOver(pos):
+                    exit()
             if event.type == pygame.QUIT:
                 exit()
         pygame.display.update()
+def new_game_menu():
+
+    start = Button((220,220,220), 300, 100+50, 200, 70, "START")
+    end = Button((220,220,220), 300, 300+50,200,70,"END")
+    if button_maker(start, end):
+        return True
 def game():
     WINDOW.blit(BACKGROUND, (0,0))
     player = Player()
     lose = False
-    set_velocity = 7
+    set_velocity = 6.5
     score = 0
     foodX = randint(5,735)
     foodY = randint(5, 535)
@@ -200,9 +214,19 @@ def game():
             Food_sound.play()
             player.snake_size += 10
             score+=1
-            foodX = randint(5, 735)
-            foodY = randint(5, 535)
-
+            while True:
+                foodX = randint(5, 735)
+                foodY = randint(5, 535)
+                for x,y in player.snake_list:
+                    if foodX>x-40 and foodX<x+40:
+                        foodX = randint(5,735)
+                    else:
+                        break
+                    if foodY>y-40 and foodY<x+40:
+                        foodY = randint(5,735)
+                    else:
+                        break
+                break
         if player.check_boundary() or player.check_hit():
             lose = True
             want_to_play = False
@@ -215,6 +239,9 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 lose = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    game()
         pygame.display.update()
 
 
