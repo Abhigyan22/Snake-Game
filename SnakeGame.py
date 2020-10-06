@@ -162,7 +162,7 @@ def button_maker(start, end):
                 if start.isOver(pos):
                     start.color = (0,0,255)
                 elif end.isOver(pos):
-                    end.color = (0,0,255)
+                    end.color = (0,128,255)
             if event.type == pygame.MOUSEBUTTONUP:
                 if start.isOver(pos):
                     return True
