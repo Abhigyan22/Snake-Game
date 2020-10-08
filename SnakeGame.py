@@ -1,5 +1,6 @@
 """The very famous Snake game built using Python
 """
+#Importing all the necessary dependencies
 from random import randint
 from math import sqrt, pow
 from buttons import Button
@@ -112,21 +113,16 @@ class Player():
         Again, because they are so close to the head and the distance between them is less
         than 25"""
 def change_player_position(event, player, set_velocity):
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_LEFT:
-            player.velocityX = -set_velocity
-            player.velocityY = 0
-        elif event.key == pygame.K_RIGHT:
-            player.velocityX = set_velocity
-            player.velocityY = 0
-        elif event.key == pygame.K_UP:
-            player.velocityY = -set_velocity
-            player.velocityX = 0
-        elif event.key == pygame.K_DOWN:
-            player.velocityY = set_velocity
-            player.velocityX = 0
-    elif event.type == pygame.KEYUP:
-        if event.key == pygame.K_LEFT:
+    """[Change the position of the player based on the key pressed]
+
+    Args:
+        event (event): It is the event log.. (event means everything which happens in a game,
+        from key press to mouse , etc.)
+        player (Player): The object (The main player.. i.e The Snake)
+        set_velocity (int): velocity of the player
+    """
+    if event.type == pygame.KEYDOWN: #If we pressed down any key
+        if event.key == pygame.K_LEFT: #If key pressed is left, its all the same for the rest
             player.velocityX = -set_velocity
             player.velocityY = 0
         elif event.key == pygame.K_RIGHT:
@@ -139,40 +135,50 @@ def change_player_position(event, player, set_velocity):
             player.velocityY = set_velocity
             player.velocityX = 0
 
-def button_maker(start, end):
+
+def button_maker(*args):
+    """Makes buttons in the menus
+
+    Returns:
+        bool: True if we press any key, if False
+    """
     while True:
         WINDOW.blit(BACKGROUND, (0,0))
-        start.draw(WINDOW, (0,0,0))
-        end.draw(WINDOW, (0,0,0))
+        args[0].draw(WINDOW, (0,0,0))
+        args[1].draw(WINDOW, (0,0,0))
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEMOTION:
-                if start.isOver(pos):
-                    start.color = (0,255,255)
-                elif end.isOver(pos):
-                    end.color = (0,255,255)
+                if args[0].isOver(pos):
+                    args[0].color = (0,255,255)
+                elif args[1].isOver(pos):
+                    args[1].color = (0,255,255)
                 else:
-                    start.color = (220,220,220)
-                    end.color = (220,220,220)
+                    args[0].color = (220,220,220)
+                    args[1].color = (220,220,220)
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     return True
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if start.isOver(pos):
-                    start.color = (0,0,255)
-                elif end.isOver(pos):
-                    end.color = (0,128,255)
+                if args[0].isOver(pos):
+                    args[0].color = (0,128,255)
+                elif args[1].isOver(pos):
+                    args[1].color = (0,128,255)
             if event.type == pygame.MOUSEBUTTONUP:
-                if start.isOver(pos):
+                if args[0].isOver(pos):
                     return True
-                elif end.isOver(pos):
+                elif args[1].isOver(pos):
                     exit()
             if event.type == pygame.QUIT:
                 exit()
         pygame.display.update()
-def new_game_menu():
+def game_menu():
+    """The Start menu
 
+    Returns:
+        bool: True if hit Play
+    """
     start = Button((220,220,220), 300, 100+50, 200, 70, "START")
     end = Button((220,220,220), 300, 300+50,200,70,"END")
     if button_maker(start, end):
@@ -186,24 +192,29 @@ def game():
     foodX = randint(5,735)
     foodY = randint(5, 535)
     while True:
-        if new_game_menu():
+        if game_menu():
             want_to_play = True
             break
+
     while want_to_play:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 want_to_play = False
+
             change_player_position(event, player, set_velocity)
+
         WINDOW.blit(BACKGROUND, (0, 0))
         print_score(score)
-        # display_player(snake_list, player_size)
         player.display_player()
         display_food(foodX, foodY)
+
         player.X += player.velocityX
         player.Y += player.velocityY
+
         head = []
         head.append(player.X) #Appending the current X position of snake to head
         head.append(player.Y) #Appending the current Y position of snake to head
+
         player.snake_list.append(head) #Appedning the current position of snake to snake_lis
 
         if len(player.snake_list)>player.snake_size:
@@ -214,19 +225,9 @@ def game():
             Food_sound.play()
             player.snake_size += 10
             score+=1
-            while True:
-                foodX = randint(5, 735)
-                foodY = randint(5, 535)
-                for x,y in player.snake_list:
-                    if foodX>x-40 and foodX<x+40:
-                        foodX = randint(5,735)
-                    else:
-                        break
-                    if foodY>y-40 and foodY<x+40:
-                        foodY = randint(5,735)
-                    else:
-                        break
-                break
+
+            foodX = randint(5,735)
+            foodY = randint(5,535)
         if player.check_boundary() or player.check_hit():
             lose = True
             want_to_play = False
@@ -244,8 +245,6 @@ def game():
                     game()
         pygame.display.update()
 
-
-
 #Below are the basic configurations of the game
 pygame.init()
 
@@ -259,6 +258,5 @@ BACKGROUND = pygame.image.load("SnakeBackground.png")
 
 pygame.mixer.music.load("BackgroundMusic.wav")
 pygame.mixer.music.play(-1)
-
 
 game()
