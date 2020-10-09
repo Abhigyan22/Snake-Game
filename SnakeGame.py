@@ -135,15 +135,27 @@ def change_player_position(event, player, set_velocity):
             player.velocityY = set_velocity
             player.velocityX = 0
 
+def is_over_play_button(pos, x, y, width, height):
+    #Pos is the mouse position or a tuple of (x,y) coordinates
+    if pos[0] > x and pos[0] < x + width:
+        if pos[1] > y and pos[1] < y + height:
+            return True
+
+    return False
 
 def button_maker(*args):
     """Makes buttons in the menus
 
     Returns:
-        bool: True if we press any key, if False
+        bool: True if we press any key, else False
     """
+    sound_playing = True
     while True:
         WINDOW.blit(BACKGROUND, (0,0))
+        if sound_playing:
+            WINDOW.blit(PLAY_BUTTON, (720, 520))
+        else:
+            WINDOW.blit(PAUSE_BUTTON, (720,520))
         args[0].draw(WINDOW, (0,0,0))
         args[1].draw(WINDOW, (0,0,0))
         for event in pygame.event.get():
@@ -156,6 +168,7 @@ def button_maker(*args):
                 else:
                     args[0].color = (220,220,220)
                     args[1].color = (220,220,220)
+
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -170,10 +183,18 @@ def button_maker(*args):
                     return True
                 elif args[1].isOver(pos):
                     exit()
+
+                if is_over_play_button(pos, 720,520,64,64):
+                    if sound_playing:
+                        sound_playing = False
+                        pygame.mixer.music.pause()
+                    else:
+                        sound_playing = True
+                        pygame.mixer.music.unpause()
             if event.type == pygame.QUIT:
                 exit()
         pygame.display.update()
-def game_menu():
+def player_chose_play():
     """The Start menu
 
     Returns:
@@ -183,16 +204,19 @@ def game_menu():
     end = Button((220,220,220), 300, 300+50,200,70,"END")
     if button_maker(start, end):
         return True
+
 def game():
     WINDOW.blit(BACKGROUND, (0,0))
     player = Player()
     lose = False
-    set_velocity = 6.5
+    set_velocity = 8
     score = 0
     foodX = randint(5,735)
     foodY = randint(5, 535)
+
+
     while True:
-        if game_menu():
+        if player_chose_play():
             want_to_play = True
             break
 
@@ -258,5 +282,9 @@ BACKGROUND = pygame.image.load("SnakeBackground.png")
 
 pygame.mixer.music.load("BackgroundMusic.wav")
 pygame.mixer.music.play(-1)
+
+PLAY_BUTTON = pygame.image.load("play.png")
+PAUSE_BUTTON = pygame.image.load("pause.png")
+
 
 game()
