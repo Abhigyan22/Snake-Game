@@ -143,7 +143,7 @@ def is_over_play_button(pos, x, y, width, height):
 
     return False
 
-def button_maker(*args):
+def button_maker(Food_sound,*args):
     """Makes buttons in the menus
 
     Returns:
@@ -188,13 +188,14 @@ def button_maker(*args):
                     if sound_playing:
                         sound_playing = False
                         pygame.mixer.music.pause()
+                        Food_sound.set_volume(0.0)
                     else:
                         sound_playing = True
                         pygame.mixer.music.unpause()
             if event.type == pygame.QUIT:
                 exit()
         pygame.display.update()
-def player_chose_play():
+def player_chose_play(Food_Sound):
     """The Start menu
 
     Returns:
@@ -202,7 +203,7 @@ def player_chose_play():
     """
     start = Button((220,220,220), 300, 100+50, 200, 70, "START")
     end = Button((220,220,220), 300, 300+50,200,70,"END")
-    if button_maker(start, end):
+    if button_maker(Food_Sound,start, end):
         return True
 
 def game():
@@ -216,7 +217,7 @@ def game():
 
 
     while True:
-        if player_chose_play():
+        if player_chose_play(Food_sound):
             want_to_play = True
             break
 
@@ -245,7 +246,6 @@ def game():
             del player.snake_list[0] #deletes the old position of snake if the length of
                             #snake_list increases the snake_list
         if food_eaten(player, foodX, foodY):
-            Food_sound = pygame.mixer.Sound("FoodEaten.wav")
             Food_sound.play()
             player.snake_size += 10
             score+=1
@@ -268,6 +268,7 @@ def game():
                 if event.key == pygame.K_RETURN:
                     game()
         pygame.display.update()
+        clock.tick(35) #This will set the max fps of the game to 35
 
 #Below are the basic configurations of the game
 pygame.init()
@@ -286,5 +287,7 @@ pygame.mixer.music.play(-1)
 PLAY_BUTTON = pygame.image.load("play.png")
 PAUSE_BUTTON = pygame.image.load("pause.png")
 
+Food_sound = pygame.mixer.Sound("FoodEaten.wav")
 
+clock = pygame.time.Clock()
 game()
