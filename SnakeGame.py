@@ -42,7 +42,8 @@ def food_eaten(player, foodX, foodY):
     """[Checks if food has been eaten]
 
     Returns:
-        [Bool]: [Returns True if food eaten else False]
+
+        Bool: [Returns True if food eaten else False]
     """
     if sqrt(pow(player.X - foodX, 2) + pow(player.Y-foodY, 2))<20:
         #The above is a math equation to find the distance between two coordinates
@@ -54,14 +55,13 @@ class Player():
     """A class for the Player (i.e. the snake)
     """
     def __init__(self):
-        self.X = 364
-        self.Y = 264
-        self.size = 36
+        self.X = 364 #X coordinate of Player
+        self.Y = 264 #Y coordinate of the Player
         self.velocityX = 0
         self.velocityY = 0
         self.snake_list = []
         self.snake_size = 1
-        self.player_size = 36
+        self.size = 36
     def display_player(self):
         """[DRAWS THE SNAKE]
 
@@ -70,8 +70,8 @@ class Player():
             snk_size (int): [description]
         """
         for x, y in self.snake_list:
-            pygame.draw.rect(WINDOW, (0,0,0), (x, y, self.player_size, self.player_size))
-        pygame.draw.rect(WINDOW, (255,0,0), (self.X, self.Y, self.player_size, self.player_size))
+            pygame.draw.rect(WINDOW, (0,0,0), (x, y, self.size, self.size))
+        pygame.draw.rect(WINDOW, (255,0,0), (self.X, self.Y, self.size, self.size))
         """If you did not understand the snake increase logic, please read the
         snake increase logic.txt..."""
 
@@ -81,17 +81,17 @@ class Player():
         Returns:
             [bool]: [True if player hit boundary else False]
         """
-        if self.X<=0:
-            self.X = 0
+        if self.X<=-14:
+            self.X = -14
             return True
-        elif self.Y<=0:
-            self.Y = 0
+        elif self.Y<=-10:
+            self.Y = -10
             return True
-        if self.X>=768:
-            self.X = 768
+        if self.X>=776:
+            self.X = 776
             return True
-        elif self.Y>=568:
-            self.Y = 568
+        elif self.Y>=574:
+            self.Y = 574
             return True
         return False
 
@@ -136,6 +136,18 @@ def change_player_position(event, player, set_velocity):
             player.velocityX = 0
 
 def is_over_play_button(pos, x, y, width, height):
+    """Returns True If We Are Over The Button which is in x,y
+
+    Args:
+        pos (Tuple): Our current mouse position
+        x (int): x coordinate of the button
+        y (int): y coordinate of the button
+        width (int): width of the button
+        height (int): height of the button
+
+    Returns:
+        True: If we are over the button which is in x,y
+    """
     #Pos is the mouse position or a tuple of (x,y) coordinates
     if pos[0] > x and pos[0] < x + width:
         if pos[1] > y and pos[1] < y + height:
@@ -144,10 +156,13 @@ def is_over_play_button(pos, x, y, width, height):
     return False
 
 def button_maker(Food_sound,*args):
-    """Makes buttons in the menus
+    """Makes the buttons in the menu
+
+    Args:
+        Food_sound (pygame.mixer.Sound): the food_eaten.wav file
 
     Returns:
-        bool: True if we press any key, else False
+        True: If we chose the play button
     """
     sound_playing = True
     while True:
@@ -192,6 +207,7 @@ def button_maker(Food_sound,*args):
                     else:
                         sound_playing = True
                         pygame.mixer.music.unpause()
+                        Food_sound.set_volume(1.0)
             if event.type == pygame.QUIT:
                 exit()
         pygame.display.update()
@@ -207,10 +223,12 @@ def player_chose_play(Food_Sound):
         return True
 
 def game():
+    """The Main loop of the game.. This is where all the magic happens
+    """
     WINDOW.blit(BACKGROUND, (0,0))
     player = Player()
     lose = False
-    set_velocity = 8
+    set_velocity = 7
     score = 0
     foodX = randint(5,735)
     foodY = randint(5, 535)
@@ -253,6 +271,8 @@ def game():
             foodX = randint(5,735)
             foodY = randint(5,535)
         if player.check_boundary() or player.check_hit():
+            Explosion_sound.play()
+            pygame.time.wait(2000)
             lose = True
             want_to_play = False
 
@@ -281,7 +301,7 @@ pygame.display.set_icon(ICON)
 
 BACKGROUND = pygame.image.load("SnakeBackground.png")
 
-pygame.mixer.music.load("BackgroundMusic.wav")
+pygame.mixer.music.load("BackgroundMusic2.wav")
 pygame.mixer.music.play(-1)
 
 PLAY_BUTTON = pygame.image.load("play.png")
@@ -289,5 +309,6 @@ PAUSE_BUTTON = pygame.image.load("pause.png")
 
 Food_sound = pygame.mixer.Sound("FoodEaten.wav")
 
+Explosion_sound = pygame.mixer.Sound("Die2.wav")
 clock = pygame.time.Clock()
 game()
