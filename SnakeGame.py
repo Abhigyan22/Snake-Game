@@ -102,16 +102,16 @@ class Player():
             [bool]: [True if hit its own body else false]
         """
         #below math equation same as food_eaten() func.
-        for x,y in self.snake_list[:-6]:
-            if sqrt(pow(self.X-x, 2)+pow(self.Y-y, 2))<25.9:
+        for x,y in self.snake_list[:-9]:
+            if sqrt(pow(self.X-x, 2)+pow(self.Y-y, 2))<20:
                 return True
         return False
-        """Why i gave index of -6 in for loop? because the snk_list[-1] is the
-        head of the snake (the red square) and [-2] to [-6] are the tail but they are
+        """Why i gave index of -9 in for loop? because the snk_list[-1] is the
+        head of the snake (the red square) and [-2] to [-9] are the tail but they are
         actually so close to the snake(they are inside the head almost) so if i try
-        without the index of [:-6], it is gonna show i lose the first time i eat...
+        without the index of [:-9], it is gonna show i lose the first time i eat...
         Again, because they are so close to the head and the distance between them is less
-        than 25"""
+        than 20"""
 def change_player_position(event, player, set_velocity):
     """[Change the position of the player based on the key pressed]
 
@@ -204,10 +204,12 @@ def button_maker(Food_sound,*args):
                         sound_playing = False
                         pygame.mixer.music.pause()
                         Food_sound.set_volume(0.0)
+                        Explosion_sound.set_volume(0.0)
                     else:
                         sound_playing = True
                         pygame.mixer.music.unpause()
                         Food_sound.set_volume(1.0)
+                        Explosion_sound.set_volume(1.0)
             if event.type == pygame.QUIT:
                 exit()
         pygame.display.update()
@@ -272,7 +274,7 @@ def game():
             foodY = randint(5,535)
         if player.check_boundary() or player.check_hit():
             Explosion_sound.play()
-            pygame.time.wait(2000)
+            pygame.time.wait(1500) #The game will wait for 1.5 secs just to show that the player died
             lose = True
             want_to_play = False
 
