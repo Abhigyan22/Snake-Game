@@ -43,6 +43,13 @@ def display_food(x:int, y:int):
 
 
 def change_highscore(file, score):
+    """Changes the highscore of the game
+
+    INPUTS:
+
+        file - The high_score.txt file
+        score - score of the player
+    """
     with open(file, "r") as r:
         if score >= int(r.read()):
             with open(file, "w") as w:
