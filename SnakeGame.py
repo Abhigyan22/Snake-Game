@@ -225,12 +225,13 @@ def player_chose_play(Food_Sound):
         return True
 
 def game():
+
     """The Main loop of the game.. This is where all the magic happens
     """
     WINDOW.blit(BACKGROUND, (0,0))
     player = Player()
     lose = False
-    set_velocity = 7
+    set_velocity = 8
     score = 0
     foodX = randint(5,735)
     foodY = randint(5, 535)
@@ -242,6 +243,7 @@ def game():
             break
 
     while want_to_play:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 want_to_play = False
@@ -277,9 +279,8 @@ def game():
             pygame.time.wait(1500) #The game will wait for 1.5 secs just to show that the player died
             lose = True
             want_to_play = False
-
         pygame.display.update()
-
+        clock.tick(30) #This will set the max fps of the game to 30
     while lose:
         WINDOW.blit(BACKGROUND, (0, 0))
         lose_message(score)
@@ -290,7 +291,8 @@ def game():
                 if event.key == pygame.K_RETURN:
                     game()
         pygame.display.update()
-        clock.tick(35) #This will set the max fps of the game to 35
+
+
 
 #Below are the basic configurations of the game
 pygame.init()
