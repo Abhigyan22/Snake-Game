@@ -13,10 +13,13 @@ def lose_message(scr:int):
     Args:
         scr (means score) -(int): [Prints the score (After player loses)]
     """
-
+    with open("high_score.txt", "r") as f:
+        highscore = f.read()
     msg = pygame.font.Font("BAARS___.TTF", 100)
-    msg = msg.render(f"YOUR SCORE: {scr}", True, (0,0, 0))
-    WINDOW.blit(msg, (90, 230))
+    score = msg.render(f"YOUR SCORE: {scr}", True, (0,0, 0))
+    high_score = msg.render(f"HIGH SCORE: {highscore}", True, (0,0,0))
+    WINDOW.blit(score, (90, 170))
+    WINDOW.blit(high_score, (96, 280))
 
 def print_score(score):
     """[Prints the score in game]
@@ -37,6 +40,13 @@ def display_food(x:int, y:int):
     """
 
     pygame.draw.rect(WINDOW, (255,255,0), (x,y,36,36))
+
+
+def change_highscore(file, score):
+    with open(file, "r") as r:
+        if score >= int(r.read()):
+            with open(file, "w") as w:
+                w.write(str(score))
 
 def food_eaten(player, foodX, foodY):
     """[Checks if food has been eaten]
@@ -275,15 +285,18 @@ def game():
             foodX = randint(5,735)
             foodY = randint(5,535)
         if player.check_boundary() or player.check_hit():
+            change_highscore("high_score.txt", score)
             Explosion_sound.play()
             pygame.time.wait(1500) #The game will wait for 1.5 secs just to show that the player died
             lose = True
             want_to_play = False
         pygame.display.update()
         clock.tick(30) #This will set the max fps of the game to 30
+
     while lose:
         WINDOW.blit(BACKGROUND, (0, 0))
         lose_message(score)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 lose = False
