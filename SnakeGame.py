@@ -157,31 +157,49 @@ def player_chose_play_button(Food_Sound):
     """The Start menu
 
     Returns:
-        bool: True if hit Play button
+
+            bool: True if hit Play button
     """
     start = Button(x=300, y=150, width=200, height=70,real_color=(220,220,220),
                   color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
                   text= "START")
     end = Button(x=300, y=350, width=200, height=70,real_color=(220,220,220),
                   color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
-                  text= "START")
-    sound = Button(x=)
+                  text= "END")
+    sound = Button(x=720, y=520, width=64, height=64)
+    sound_state = "play"
     while True:
         WINDOW.blit(BACKGROUND, (0,0))
         start.draw(WINDOW, (0,0,0))
         end.draw(WINDOW, (0,0,0))
+        if sound_state == "play":
+            WINDOW.blit(PLAY_BUTTON, (720,520))
+        elif sound_state == "pause":
+            WINDOW.blit(PAUSE_BUTTON, (720, 520))
         for event in pygame.event.get():
             # WINDOW.blit(BACKGROUND, (0,0))
             pos = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if start.change_color(event, pos):
+            if start.main_loop(event, pos):
                 return True
-            elif end.change_color(event, pos):
+            elif end.main_loop(event, pos):
                 pygame.quit()
                 exit()
+            elif sound.main_loop(event, pos):
+                if sound_state == "play":
+                    sound_state = "pause"
+                    pygame.mixer.music.pause()
+                    Explosion_sound.set_volume(0)
+                    Food_sound.set_volume(0)
+                elif sound_state == "pause":
+                    sound_state = "play"
+                    pygame.mixer.music.unpause()
+                    Explosion_sound.set_volume(1)
+                    Food_sound.set_volume(1)
         pygame.display.update()
+
 def game():
 
     """The Main loop of the game.. This is where all the magic happens

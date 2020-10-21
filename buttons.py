@@ -32,7 +32,7 @@ class Button():
 
         return False
 
-    def change_color(self, event, pos):
+    def main_loop(self, event, pos):
         if event.type == pygame.MOUSEMOTION:
             if self.is_over(pos):
                 self.color = self.hover_color
