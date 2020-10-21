@@ -1,7 +1,11 @@
 import pygame
 class Button():
-    def __init__(self, color, x,y,width,height, text=''):
-        self.color = color
+    def __init__(self, x, y, width,height,real_color=(0,0,0),color=(0,0,0),
+                hover_color=(0,0,0), press_color=(0,0,0),text=''):
+        self.real_color = real_color
+        self.color = color #The color that will be drawed
+        self.hover_color = hover_color
+        self.press_color = press_color
         self.x = x
         self.y = y
         self.width = width
@@ -20,10 +24,23 @@ class Button():
             text = font.render(self.text, 1, (0,0,0))
             win.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
 
-    def isOver(self, pos):
+    def is_over(self, pos):
         #Pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.x and pos[0] < self.x + self.width:
             if pos[1] > self.y and pos[1] < self.y + self.height:
                 return True
 
         return False
+
+    def change_color(self, event, pos):
+        if event.type == pygame.MOUSEMOTION:
+            if self.is_over(pos):
+                self.color = self.hover_color
+            else:
+                self.color = self.real_color
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if self.is_over(pos):
+                self.color = self.press_color
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if self.is_over(pos):
+                return True

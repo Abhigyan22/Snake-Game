@@ -152,95 +152,36 @@ def change_player_position(event, player, set_velocity):
             player.velocityY = set_velocity
             player.velocityX = 0
 
-def is_over_play_button(pos, x, y, width, height):
-    """Returns True If We Are Over The Button which is in x,y
 
-    Args:
-        pos (Tuple): Our current mouse position
-        x (int): x coordinate of the button
-        y (int): y coordinate of the button
-        width (int): width of the button
-        height (int): height of the button
-
-    Returns:
-        True: If we are over the button which is in x,y
-    """
-    #Pos is the mouse position or a tuple of (x,y) coordinates
-    if pos[0] > x and pos[0] < x + width:
-        if pos[1] > y and pos[1] < y + height:
-            return True
-
-    return False
-
-def button_maker(Food_sound,*args):
-    """Makes the buttons in the menu
-
-    Args:
-        Food_sound (pygame.mixer.Sound): the food_eaten.wav file
-
-    Returns:
-        True: If we chose the play button
-    """
-    sound_playing = True
-    while True:
-        WINDOW.blit(BACKGROUND, (0,0))
-        if sound_playing:
-            WINDOW.blit(PLAY_BUTTON, (720, 520))
-        else:
-            WINDOW.blit(PAUSE_BUTTON, (720,520))
-        args[0].draw(WINDOW, (0,0,0))
-        args[1].draw(WINDOW, (0,0,0))
-        for event in pygame.event.get():
-            pos = pygame.mouse.get_pos()
-            if event.type == pygame.MOUSEMOTION:
-                if args[0].isOver(pos):
-                    args[0].color = (0,255,255)
-                elif args[1].isOver(pos):
-                    args[1].color = (0,255,255)
-                else:
-                    args[0].color = (220,220,220)
-                    args[1].color = (220,220,220)
-
-
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    return True
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if args[0].isOver(pos):
-                    args[0].color = (0,128,255)
-                elif args[1].isOver(pos):
-                    args[1].color = (0,128,255)
-            if event.type == pygame.MOUSEBUTTONUP:
-                if args[0].isOver(pos):
-                    return True
-                elif args[1].isOver(pos):
-                    exit()
-
-                if is_over_play_button(pos, 720,520,64,64):
-                    if sound_playing:
-                        sound_playing = False
-                        pygame.mixer.music.pause()
-                        Food_sound.set_volume(0.0)
-                        Explosion_sound.set_volume(0.0)
-                    else:
-                        sound_playing = True
-                        pygame.mixer.music.unpause()
-                        Food_sound.set_volume(1.0)
-                        Explosion_sound.set_volume(1.0)
-            if event.type == pygame.QUIT:
-                exit()
-        pygame.display.update()
-def player_chose_play(Food_Sound):
+def player_chose_play_button(Food_Sound):
     """The Start menu
 
     Returns:
-        bool: True if hit Play
+        bool: True if hit Play button
     """
-    start = Button((220,220,220), 300, 100+50, 200, 70, "START")
-    end = Button((220,220,220), 300, 300+50,200,70,"END")
-    if button_maker(Food_Sound,start, end):
-        return True
-
+    start = Button(x=300, y=150, width=200, height=70,real_color=(220,220,220),
+                  color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
+                  text= "START")
+    end = Button(x=300, y=350, width=200, height=70,real_color=(220,220,220),
+                  color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
+                  text= "START")
+    sound = Button(x=)
+    while True:
+        WINDOW.blit(BACKGROUND, (0,0))
+        start.draw(WINDOW, (0,0,0))
+        end.draw(WINDOW, (0,0,0))
+        for event in pygame.event.get():
+            # WINDOW.blit(BACKGROUND, (0,0))
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if start.change_color(event, pos):
+                return True
+            elif end.change_color(event, pos):
+                pygame.quit()
+                exit()
+        pygame.display.update()
 def game():
 
     """The Main loop of the game.. This is where all the magic happens
@@ -254,10 +195,8 @@ def game():
     foodY = randint(5, 535)
 
 
-    while True:
-        if player_chose_play(Food_sound):
-            want_to_play = True
-            break
+    if player_chose_play_button(Food_sound):
+        want_to_play = True
 
     while want_to_play:
 
