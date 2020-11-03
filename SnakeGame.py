@@ -113,10 +113,10 @@ class Player():
         return False
 
     def check_hit(self):
-        """[SEE IF SNAKE HIT ITS OWN BODY]
+        """SEE IF SNAKE HIT ITS OWN BODY
 
         Returns:
-            [bool]: [True if hit its own body else false]
+            \nbool: True if hit its own body else false
         """
         #below math equation same as food_eaten() func.
         for x,y in self.snake_list[:-9]:
@@ -153,7 +153,7 @@ def change_player_position(event, player, set_velocity):
             player.velocityX = 0
 
 
-def player_chose_play_button(Food_Sound):
+def game_menu(Food_Sound, text_for_first_button):
     """The Start menu
 
     Returns:
@@ -162,7 +162,7 @@ def player_chose_play_button(Food_Sound):
     """
     start = Button(x=300, y=150, width=200, height=70,real_color=(220,220,220),
                   color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
-                  text= "START")
+                  text= text_for_first_button)
     end = Button(x=300, y=350, width=200, height=70,real_color=(220,220,220),
                   color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
                   text= "END")
@@ -187,18 +187,20 @@ def player_chose_play_button(Food_Sound):
             elif end.main_loop(event, pos):
                 pygame.quit()
                 exit()
-            elif sound.main_loop(event, pos):
+            elif sound.clicked(event, pos):
                 if sound_state == "play":
                     sound_state = "pause"
                     pygame.mixer.music.pause()
-                    Explosion_sound.set_volume(0)
-                    Food_sound.set_volume(0)
+                    EXPLOSION_SOUND.set_volume(0)
+                    FOOD_SOUND.set_volume(0)
                 elif sound_state == "pause":
                     sound_state = "play"
                     pygame.mixer.music.unpause()
-                    Explosion_sound.set_volume(1)
-                    Food_sound.set_volume(1)
+                    EXPLOSION_SOUND.set_volume(1)
+                    FOOD_SOUND.set_volume(1)
         pygame.display.update()
+
+
 
 def game():
 
@@ -211,10 +213,7 @@ def game():
     score = 0
     foodX = randint(5,735)
     foodY = randint(5, 535)
-
-
-    if player_chose_play_button(Food_sound):
-        want_to_play = True
+    want_to_play = True
 
     while want_to_play:
 
@@ -242,7 +241,7 @@ def game():
             del player.snake_list[0] #deletes the old position of snake if the length of
                             #snake_list increases the snake_list
         if food_eaten(player, foodX, foodY):
-            Food_sound.play()
+            FOOD_SOUND.play()
             player.snake_size += 10
             score+=1
 
@@ -250,27 +249,36 @@ def game():
             foodY = randint(5,535)
         if player.check_boundary() or player.check_hit():
             change_highscore("high_score.txt", score)
-            Explosion_sound.play()
-            pygame.time.wait(1500) #The game will wait for 1.5 secs just to show that the player died
-            lose = True
+            EXPLOSION_SOUND.play()
+            lose_message(score)
+            pygame.time.wait(5000) #The game will wait for 1 sec just to show that the player died
+            # lose = True
             want_to_play = False
         pygame.display.update()
-        clock.tick(30) #This will set the max fps of the game to 30
+        CLOCK.tick(30) #This will set the max fps of the game to 30
 
-    while lose:
-        WINDOW.blit(BACKGROUND, (0, 0))
-        lose_message(score)
+    # while lose:
+    #     WINDOW.blit(BACKGROUND, (0, 0))
+    #     lose_message(score)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                lose = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    game()
-        pygame.display.update()
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             lose = False
+    #         elif event.type == pygame.KEYDOWN:
+    #             if event.key == pygame.K_RETURN:
+    #                 game()
+    #     pygame.display.update()
 
 
-
+def main():
+    """It has the game states -
+    1. Menu
+    2. Game
+    3. Settings, etc
+    """
+    while True:
+        if game_menu(FOOD_SOUND, "PLAY"):
+            game()
 #Below are the basic configurations of the game
 pygame.init()
 
@@ -288,8 +296,10 @@ pygame.mixer.music.play(-1)
 PLAY_BUTTON = pygame.image.load("play.png")
 PAUSE_BUTTON = pygame.image.load("pause.png")
 
-Food_sound = pygame.mixer.Sound("FoodEaten.wav")
+FOOD_SOUND = pygame.mixer.Sound("FoodEaten.wav")
 
-Explosion_sound = pygame.mixer.Sound("Die2.wav")
-clock = pygame.time.Clock()
-game()
+EXPLOSION_SOUND = pygame.mixer.Sound("Die2.wav")
+
+CLOCK = pygame.time.Clock()
+
+main()
