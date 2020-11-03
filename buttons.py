@@ -32,15 +32,27 @@ class Button():
 
         return False
 
-    def main_loop(self, event, pos):
+    def clicked(self, event, pos):
+        if event.type == pygame.MOUSEBUTTONUP:
+            if self.is_over(pos):
+                return True
+
+    def hovered_over(self, event, pos):
         if event.type == pygame.MOUSEMOTION:
             if self.is_over(pos):
                 self.color = self.hover_color
             else:
                 self.color = self.real_color
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+
+    def change_color(self, event, pos):
+        if event.type == pygame.MOUSEBUTTONDOWN:
             if self.is_over(pos):
-                self.color = self.press_color
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if self.is_over(pos):
-                return True
+                self.color = self.hover_color
+            else:
+                self.color = self.real_color
+
+    def main_loop(self, event, pos):
+        self.hovered_over(event, pos)
+        self.change_color(event, pos)
+        if self.clicked(event, pos):
+            return True
