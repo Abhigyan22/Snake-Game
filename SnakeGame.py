@@ -5,6 +5,7 @@ from random import randint
 from math import sqrt, pow
 from buttons import Button
 from sys import exit
+from time import perf_counter
 import pygame
 
 def lose_message(scr:int):
@@ -15,21 +16,24 @@ def lose_message(scr:int):
     """
     with open("high_score.txt", "r") as f:
         highscore = f.read()
-    msg = pygame.font.Font("BAARS___.TTF", 100)
-    score = msg.render(f"YOUR SCORE: {scr}", True, (0,0, 0))
-    high_score = msg.render(f"HIGH SCORE: {highscore}", True, (0,0,0))
-    WINDOW.blit(score, (90, 170))
-    WINDOW.blit(high_score, (96, 280))
+    big_font = pygame.font.Font("BAARS___.TTF", 100)
+    small_font = pygame.font.Font("BAARS__.TTF", 50)
 
+    score = big_font.render(f"YOUR SCORE: {scr}", True, (0,0, 0))
+    high_score = big_font.render(f"HIGH SCORE: {highscore}", True, (0,0,0))
+    press_any = small_font.render("PRESS ANY KEY TO CONTINUE", True, (0,0,0))
+    WINDOW.blit(score, (90, 160))
+    WINDOW.blit(high_score, (92, 260))
+    WINDOW.blit(press_any, (190, 540))
 def print_score(score):
-    """[Prints the score in game]
+    """Prints the score in game
 
     Args:
-        score ([int]): [Player score]
+        score (int): Player score
     """
-    msg = pygame.font.Font("BAARS___.TTF", 70)
-    msg = msg.render(f"{score}", True, (0,0,0,100))
-    WINDOW.blit(msg, (30, 30))
+    font = pygame.font.Font("BAARS___.TTF", 70)
+    scr = font.render(f"{score}", True, (0,0,0,100))
+    WINDOW.blit(scr, (30, 30))
 
 def display_food(x:int, y:int):
     """[Display the food in its position ]
@@ -153,7 +157,7 @@ def change_player_position(event, player, set_velocity):
             player.velocityX = 0
 
 
-def game_menu(Food_Sound, text_for_first_button):
+def game_menu(Food_Sound):
     """The Start menu
 
     Returns:
@@ -162,7 +166,7 @@ def game_menu(Food_Sound, text_for_first_button):
     """
     start = Button(x=300, y=150, width=200, height=70,real_color=(220,220,220),
                   color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
-                  text= text_for_first_button)
+                  text= "START")
     end = Button(x=300, y=350, width=200, height=70,real_color=(220,220,220),
                   color=(220,220,220),hover_color=(0,255,255), press_color=(0,128,255),
                   text= "END")
@@ -250,24 +254,21 @@ def game():
         if player.check_boundary() or player.check_hit():
             change_highscore("high_score.txt", score)
             EXPLOSION_SOUND.play()
-            lose_message(score)
-            pygame.time.wait(5000) #The game will wait for 1 sec just to show that the player died
-            # lose = True
+            pygame.time.wait(1000) #The game will wait for 1 sec just to show that the player died
+            clicked = False
+            while not clicked:
+                WINDOW.blit(BACKGROUND, (0,0))
+                lose_message(score)
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        quit()
+                    elif event.type == pygame.KEYUP:
+                        clicked = True
+                pygame.display.update()
             want_to_play = False
         pygame.display.update()
         CLOCK.tick(30) #This will set the max fps of the game to 30
-
-    # while lose:
-    #     WINDOW.blit(BACKGROUND, (0, 0))
-    #     lose_message(score)
-
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             lose = False
-    #         elif event.type == pygame.KEYDOWN:
-    #             if event.key == pygame.K_RETURN:
-    #                 game()
-    #     pygame.display.update()
 
 
 def main():
@@ -277,7 +278,7 @@ def main():
     3. Settings, etc
     """
     while True:
-        if game_menu(FOOD_SOUND, "PLAY"):
+        if game_menu(FOOD_SOUND):
             game()
 #Below are the basic configurations of the game
 pygame.init()
