@@ -14,10 +14,10 @@ def lose_message(scr:int):
     Args:
         scr (means score) -(int): [Prints the score (After player loses)]
     """
-    with open("high_score.txt", "r") as f:
+    with open("TEXT/high_score.txt", "r") as f:
         highscore = f.read()
-    big_font = pygame.font.Font("BAARS___.TTF", 100)
-    small_font = pygame.font.Font("BAARS__.TTF", 50)
+    big_font = pygame.font.Font("FONT/BAARS___.TTF", 100)
+    small_font = pygame.font.Font("FONT/BAARS__.TTF", 50)
 
     score = big_font.render(f"YOUR SCORE: {scr}", True, (0,0, 0))
     high_score = big_font.render(f"HIGH SCORE: {highscore}", True, (0,0,0))
@@ -31,7 +31,7 @@ def print_score(score):
     Args:
         score (int): Player score
     """
-    font = pygame.font.Font("BAARS___.TTF", 70)
+    font = pygame.font.Font("FONT/BAARS___.TTF", 70)
     scr = font.render(f"{score}", True, (0,0,0,100))
     WINDOW.blit(scr, (30, 30))
 
@@ -111,8 +111,8 @@ class Player():
         if self.X>=776:
             self.X = 776
             return True
-        elif self.Y>=574:
-            self.Y = 574
+        elif self.Y>=580:
+            self.Y = 580
             return True
         return False
 
@@ -252,7 +252,7 @@ def game():
             foodX = randint(5,735)
             foodY = randint(5,535)
         if player.check_boundary() or player.check_hit():
-            change_highscore("high_score.txt", score)
+            change_highscore("TEXT/high_score.txt", score)
             EXPLOSION_SOUND.play()
             pygame.time.wait(1000) #The game will wait for 1 sec just to show that the player died
             clicked = False
@@ -262,8 +262,9 @@ def game():
 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
-                        quit()
-                    elif event.type == pygame.KEYUP:
+                        pygame.quit()
+                        exit()
+                    elif event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
                         clicked = True
                 pygame.display.update()
             want_to_play = False
@@ -286,20 +287,20 @@ pygame.init()
 WINDOW = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Snake Game")
 
-ICON = pygame.image.load("SnakeIcon.png")
+ICON = pygame.image.load("IMG/SnakeIcon.png")
 pygame.display.set_icon(ICON)
 
-BACKGROUND = pygame.image.load("SnakeBackground.png")
+BACKGROUND = pygame.image.load("IMG/SnakeBackground.png")
 
-pygame.mixer.music.load("BackgroundMusic2.wav")
+pygame.mixer.music.load("SFX/BackgroundMusic2.wav")
 pygame.mixer.music.play(-1)
 
-PLAY_BUTTON = pygame.image.load("play.png")
-PAUSE_BUTTON = pygame.image.load("pause.png")
+PLAY_BUTTON = pygame.image.load("IMG/play.png")
+PAUSE_BUTTON = pygame.image.load("IMG/pause.png")
 
-FOOD_SOUND = pygame.mixer.Sound("FoodEaten.wav")
+FOOD_SOUND = pygame.mixer.Sound("SFX/FoodEaten.wav")
 
-EXPLOSION_SOUND = pygame.mixer.Sound("Die2.wav")
+EXPLOSION_SOUND = pygame.mixer.Sound("SFX/Die2.wav")
 
 CLOCK = pygame.time.Clock()
 
